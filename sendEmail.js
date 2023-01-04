@@ -1,8 +1,8 @@
 const listenPort = 5500;
 require('dotenv').config();
 const axios = require('axios');
-const privateKeyPath = '/etc/letsencrypt/live/node.pymnts.com/privkey.pem';
-const fullchainPath = '/etc/letsencrypt/live/node.pymnts.com/fullchain.pem';
+const privateKeyPath = '/etc/letsencrypt/live/services.competitionpolicyinternational.com/privkey.pem';
+const fullchainPath = '/etc/letsencrypt/live/services.competitionpolicyinternational.com/fullchain.pem';
 
 const express = require('express');
 const https = require('https');
@@ -48,6 +48,7 @@ const sendEmail = (recipientEmailAddress, senderEmailAddress, subject, html, fro
      
         axios(request)
         .then(result => {
+            console.log(result.data);
             //console.log ("hello result");
              resolve(result.data)       
             return;
@@ -66,14 +67,25 @@ const sendEmail = (recipientEmailAddress, senderEmailAddress, subject, html, fro
  }
 
  const email = `
- Testing <b>SMTP.com</b>
+ Testing <b>SMTP.com</b> for CPI
  `
-
- //sendEmail('admin@pymnts.com', 'admin@pymnts.com', 'Testing SMTP.com', email, 'admin_pymnts_com299', "PYMNTS");
 
 app.get('/', (req, res) => {
     res.send('Hello, World!');
 });
+
+app.post('/sendEmail', (req, res) => {
+    const { key } = req.body;
+
+    if (!key) return res.status(400).json('invalid request');
+    if (key !== process.env.SEND_EMAIL_KEY) return res.status(400).json('invalid key');
+
+    const {recipient, sender, subject, html, senderName} = req.body;
+
+    sendEmail(recipient, sender, subject, html, senderName);
+
+    res.status(200).json('success');
+})
 
 const httpsServer = https.createServer({
     key: fs.readFileSync(privateKeyPath),
