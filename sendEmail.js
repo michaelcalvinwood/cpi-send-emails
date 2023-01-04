@@ -48,9 +48,8 @@ const sendEmail = (recipientEmailAddress, senderEmailAddress, subject, html, fro
      
         axios(request)
         .then(result => {
-            console.log(result.data);
-            //console.log ("hello result");
-             resolve(result.data)       
+            //console.log(result.data);
+            resolve(result.data)       
             return;
         })
         .catch(err => {
@@ -65,10 +64,6 @@ const sendEmail = (recipientEmailAddress, senderEmailAddress, subject, html, fro
         return;
     })
  }
-
- const email = `
- Testing <b>SMTP.com</b> for CPI
- `
 
 app.get('/', (req, res) => {
     res.send('Hello, World!');
